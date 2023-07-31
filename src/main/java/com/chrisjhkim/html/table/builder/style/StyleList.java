@@ -3,13 +3,13 @@ package com.chrisjhkim.html.table.builder.style;
 import java.util.*;
 
 public class StyleList {
-	private List<Style> styles = new ArrayList<>();
+	private final List<Style> styles = new ArrayList<>();
 
 	public void add(Style style) {
 		this.styles.add(style);
 	}
 	public void addAll(Collection<Style> styles) {
-		this.styles.addAll(styles);
+		styles.forEach(this::add);
 	}
 
 
@@ -25,10 +25,17 @@ public class StyleList {
 		});
 		StringBuilder sb = new StringBuilder();
 		sb.append("'");
-		map.forEach((key, values) -> {
-			sb.append(key).append(":").append(values).append(";");
-		});
+		map.forEach((key, values) ->
+			sb.append(key).append(":").append(values).append(";")
+		);
 		sb.append("'");
 		return sb.toString();
+	}
+
+	public StyleList overwriteWith(StyleList styleList){
+		StyleList result = new StyleList();
+		result.addAll(this.styles);
+		result.addAll(styleList.styles);
+		return result;
 	}
 }

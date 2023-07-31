@@ -8,73 +8,85 @@ import java.util.Arrays;
 import java.util.List;
 
 public class HtmlTableBuilder {
+	private static String INDENT = "    ";
+	private static String LINE_BREAK = "\r\n";
 
 	// style
-	private StyleList tableStyles = new StyleList();
+	private final StyleList tableStyles = new StyleList();
+	private final StyleList allColumnStyles = new StyleList();
 	// lines
-	private List<TableLine> tableLines = new ArrayList<>();
+	private final List<TableLine> tableLines = new ArrayList<>();
 
 	// Builder Options
-	private boolean includeLineBreak = true;
+	private boolean includeLineBreak = false;
 	// Building functional params
-	private StringBuilder sb = new StringBuilder();
+	private final StringBuilder sb = new StringBuilder();
 
 	public void addLine(TableLine line){
 		tableLines.add(line);
 
 	}
 	public String build() {
-		if ( this.tableStyles.isEmpty() ){
-			appendLine("<table>");
-		}else{
-//			StringBuilder sb = new StringBuilder();
-			sb.append("<table style=");
-			sb.append(this.tableStyles.toStyleString());
-			sb.append(">");
-
-			appendLineBreak();
-
+		if ( !includeLineBreak ){
+			LINE_BREAK = "";
+			INDENT = "";
 		}
+
+
+		int currentDepth = 1;
+		sb.append(INDENT.repeat(currentDepth++));
+		sb.append("<table");
+
+		if ( !this.tableStyles.isEmpty() ){
+			sb.append(" style=").append(this.tableStyles.toStyleString());
+		}
+
+		sb.append(">");
+		appendLineBreak();
 
 
 		for (TableLine tableLine : tableLines) {
-			appendTableLine(tableLine);
+			appendTableLine(tableLine, currentDepth);
 		}
 
-		appendLine("</table>");
+		appendLine(INDENT.repeat(--currentDepth),"</table>");
 
 		return sb.toString();
 	}
 
 	private void appendLineBreak() {
 		if ( includeLineBreak) {
-			sb.append("\r\n");
+			sb.append(LINE_BREAK);
 		}
 	}
 
-	private void appendTableLine(TableLine tableLine) {
-		appendLine("<tr>");
+	private void appendTableLine(TableLine tableLine, int currentDepth) {
+
+		appendLine(INDENT.repeat(currentDepth++), "<tr>");
 
 		for (TableColumn tableColumn : tableLine.getTableColumns()) {
 			String tagName = tableLine.lineType.getRowTagName();
 
-			if ( tableColumn.styleList.isEmpty() ){
-				appendLine("<", tagName, ">",tableColumn.getValue(),"</",tagName,">");
-			}else{
-				sb.append("<")
-						.append(tagName)
-						.append(" style=").append(tableColumn.styleList.toStyleString());
-				sb.append(">");
-
-				appendLine(tableColumn.getValue(),"</",tagName,">");
-
+			StyleList styles = tableColumn.styleList;
+			if ( !this.allColumnStyles.isEmpty()){
+				// 테이블에서 설정한 global column style 있으면 global table style + allColumn Style
+				styles = this.allColumnStyles.overwriteWith(styles);
 			}
+			sb.append(INDENT.repeat(currentDepth)).append("<").append(tagName);
+			if ( !styles.isEmpty()){
+				sb.append(" style=").append(styles.toStyleString());
+			}
+			sb.append(" >");
+
+			appendLine(tableColumn.getValue(),"</",tagName,">");
+
 
 
 		}
-		appendLine("</tr>");
+		appendLine(INDENT.repeat(--currentDepth), "</tr>");
 	}
 
+	@SuppressWarnings("UnusedReturnValue")
 	private StringBuilder appendLine(String ... str) {
 		for (String s : str) {
 			if ( s != null ) {
@@ -96,6 +108,16 @@ public class HtmlTableBuilder {
 
 	public HtmlTableBuilder tableStyle(Style... styles) {
 		this.tableStyles.addAll(Arrays.asList(styles));
+		return this;
+	}
+
+	public HtmlTableBuilder allColumnStyle(Style... styles) {
+		this.allColumnStyles.addAll(Arrays.asList(styles));
+		return this;
+	}
+
+	public HtmlTableBuilder beautify() {
+		this.includeLineBreak = true;
 		return this;
 	}
 
@@ -128,8 +150,8 @@ public class HtmlTableBuilder {
 	}
 
 	public static class HtmlTableLineBuilder{
-		private HtmlTableBuilder parent;
-		private TableLine line;
+		private final HtmlTableBuilder parent;
+		private final TableLine line;
 		public HtmlTableLineBuilder(HtmlTableBuilder htmlTableBuilder, LineType lineType) {
 			this.parent = htmlTableBuilder;
 
@@ -137,6 +159,7 @@ public class HtmlTableBuilder {
 			this.parent.addLine(this.line);
 		}
 
+		@SuppressWarnings("UnusedReturnValue")
 		public HtmlTableLineBuilder addColumn(String columnValue, Style... styles) {
 			this.line.addColumn(columnValue, styles);
 			return this;
@@ -166,7 +189,7 @@ public class HtmlTableBuilder {
 	}
 	private static class TableColumn{
 		private final String value;
-		private StyleList styleList = new StyleList();
+		private final StyleList styleList = new StyleList();
 
 		public TableColumn(String value, Style ... styles) {
 			this.value = value;

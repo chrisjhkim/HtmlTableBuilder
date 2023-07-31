@@ -10,12 +10,14 @@ class HtmlTableBuilderTest {
 	void test(){
 
 		// Test # Given
-		HtmlTableBuilder builder = new HtmlTableBuilder();
+		HtmlTableBuilder builder = new HtmlTableBuilder()
+				.beautify()
+				;
 
 		builder.tableStyle( Style.BorderCollapse.COLLAPSE)
+				.allColumnStyle(Style.Padding.px(8), Style.Border.px(1), Style.Border.SOLID)
 				.startHeaderTr()
-//					.thStyles(Style.Padding.px(8))
-					.th("Name", Style.Padding.px(8), Style.Border.px(1), Style.Border.SOLID)
+					.th("Name", Style.of("background-color", "grey"), Style.of("color","white"))
 					.th("Age")
 					.th("Occupation")
 				.finishHeaderTr()
@@ -39,6 +41,7 @@ class HtmlTableBuilderTest {
 		String table = builder.build();
 
 		// Test # Then
+
 
 
 		HtmlBuilderTester tester = new HtmlBuilderTester();

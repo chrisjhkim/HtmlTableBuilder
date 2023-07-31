@@ -1,9 +1,6 @@
 package com.chrisjhkim.html.table.builder.style;
 
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class Style {
 
 
@@ -15,6 +12,12 @@ public class Style {
 		this.key = key;
 		this.value = value;
 	}
+
+	public static Style of(String key, String value) {
+		return new Style(key, value);
+	}
+
+
 
 	public String getKey() {
 		return key;
