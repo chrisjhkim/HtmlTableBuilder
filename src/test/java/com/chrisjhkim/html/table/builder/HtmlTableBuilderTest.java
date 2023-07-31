@@ -8,7 +8,6 @@ class HtmlTableBuilderTest {
 
 	@Test
 	void test(){
-
 		// Test # Given
 		HtmlTableBuilder builder = new HtmlTableBuilder()
 				.beautify()

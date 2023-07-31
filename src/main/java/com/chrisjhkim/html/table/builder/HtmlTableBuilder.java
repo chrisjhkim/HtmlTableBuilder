@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Builder for table in html
+ * <p>
+ * generates {@code <html>} {@code <table>}
+ */
 public class HtmlTableBuilder {
 	private static String INDENT = "    ";
 	private static String LINE_BREAK = "\r\n";
@@ -22,10 +27,21 @@ public class HtmlTableBuilder {
 	// Building functional params
 	private final StringBuilder sb = new StringBuilder();
 
+	/**
+	 * adda single line (eg. {@code <th>} or {@code <td>} ) to the table
+	 */
 	public void addLine(TableLine line){
 		tableLines.add(line);
 
 	}
+
+	/**
+	 * build {@code <html>} {@code <table>} to String from values.
+	 * <p>
+	 * the result starts from {@code <table>} and ends with {@code </table>}
+	 *
+	 * @return {@code <table>} /* table headers and body  * /  {@code </table>}
+	 */
 	public String build() {
 		if ( !includeLineBreak ){
 			LINE_BREAK = "";
@@ -99,9 +115,41 @@ public class HtmlTableBuilder {
 		return sb;
 	}
 
+	/**
+	 * Start building {@code <tr>} by using returned {@link HtmlTableLineBuilder}.
+	 * <p></p>
+	 * Automatically sets line's type as  header ( {@code <th>} )
+	 * and returns {@link HtmlTableHeaderBuilder} which extends
+	 * {@link HtmlTableLineBuilder}.
+	 * <p></p>
+	 * Use {@link HtmlTableLineBuilder#endLine() } to finish the line.
+	 * <p></p>
+	 * Adding multiple header lines is possible.
+	 * <p></p>
+	 *
+	 * @return HtmlTableHeaderBuilder
+	 * @see HtmlTableLineBuilder
+	 * @see HtmlTableLineBuilder#endLine()
+	 */
 	public HtmlTableHeaderBuilder startHeaderTr() {
 		return new HtmlTableHeaderBuilder(this);
 	}
+	/**
+	 * Start building {@code <tr>} by using returned {@link HtmlTableBodyBuilder}.
+	 * <p></p>
+	 * Automatically sets line's type as  header ( {@code <td>} )
+	 * and returns {@link HtmlTableBodyBuilder} which extends
+	 * {@link HtmlTableLineBuilder}.
+	 * <p></p>
+	 * Use {@link HtmlTableLineBuilder#endLine() } to finish the line.
+	 * <p></p>
+	 * Adding multiple header lines is possible.
+	 * <p></p>
+	 *
+	 * @return {@link HtmlTableBodyBuilder}
+	 * @see HtmlTableLineBuilder
+	 * @see HtmlTableLineBuilder#endLine()
+	 */
 	public HtmlTableBodyBuilder startBodyTr() {
 		return new HtmlTableBodyBuilder(this);
 	}
@@ -116,12 +164,20 @@ public class HtmlTableBuilder {
 		return this;
 	}
 
+	/**
+	 * Includes indents and line breaks when building html table.
+	 *
+	 */
 	public HtmlTableBuilder beautify() {
 		this.includeLineBreak = true;
 		return this;
 	}
 
-
+	/**
+	 * Class for building header of the table.
+	 * <p>
+	 * Provides methods for setting value and options for {@code <th>} tag
+	 */
 	public static class HtmlTableHeaderBuilder extends HtmlTableLineBuilder{
 		public HtmlTableHeaderBuilder(HtmlTableBuilder htmlTableBuilder) {
 			super(htmlTableBuilder, LineType.HEADER);
