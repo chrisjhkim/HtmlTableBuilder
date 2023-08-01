@@ -18,4 +18,5 @@
 *.rar
 
 # Test results
-out/test/resources/*.html
+src/test/resources/test_result/*
+out/test/resources/test_result/*

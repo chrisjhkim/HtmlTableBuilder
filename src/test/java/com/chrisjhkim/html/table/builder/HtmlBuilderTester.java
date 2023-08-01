@@ -8,13 +8,12 @@ import java.io.IOException;
 public class HtmlBuilderTester {
 
 	public void createHtml(String htmlString){
-		String table = "<table><tr><th>Name</th><th>Age</th><th>Occupation</th></tr><tr><td>John</td><td>30</td><td>Engineer</td></tr><tr><td>Mary</td><td>25</td><td>Teacher</td></tr><tr><td>David</td><td>35</td><td>Doctor</td></tr></table>";
 		createFile(true,"result", htmlString, true);
 	}
 
 	private void createFile(boolean preserverLastFile, String fileName, String htmlBodyString, boolean includeHtmlHeadersAndEtc){
 		String projectPath = System.getProperty("user.dir"); // 프로젝트 경로
-		String directoryPath = projectPath + "/src/test/resources"; // test 폴더 경로
+		String directoryPath = projectPath + "/src/test/resources/test_result"; // test 폴더 경로
 
 		// 파일명 중복을 처리하기 위한 번호
 		int fileNumber = 0;
