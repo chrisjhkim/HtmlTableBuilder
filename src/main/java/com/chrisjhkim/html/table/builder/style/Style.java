@@ -1,6 +1,11 @@
 package com.chrisjhkim.html.table.builder.style;
 
-
+/**
+ * Class representing a single style.
+ * <p>
+ *     TODO : some values such as 5px , 1px  cannot exist at same time. In result of build or extract, They should overwrite each other .
+ * </p>
+ */
 public class Style {
 
 

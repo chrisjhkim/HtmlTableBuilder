@@ -28,7 +28,7 @@ public class HtmlTableBuilder {
 	private final StringBuilder sb = new StringBuilder();
 
 	/**
-	 * adda single line (eg. {@code <th>} or {@code <td>} ) to the table
+	 * adda single line (e.g. {@code <th>} or {@code <td>} ) to the table
 	 */
 	public void addLine(TableLine line){
 		tableLines.add(line);
@@ -154,11 +154,34 @@ public class HtmlTableBuilder {
 		return new HtmlTableBodyBuilder(this);
 	}
 
+	/**
+	 * Adds styles to {@code <table>}. As a result of method,
+	 * {@code <table style='border-collapse: collapse; background-color: grey;'> } is generated.
+	 * <p></p>
+	 * Note that style is added to {@code <table>}. Not {@code <tr>} {@code <th>} nor {@code <td>}.
+	 * <p>
+	 * When building or extracting result of the table, some or all of the styles applied to individual lines({@code <tr>})
+	 * 	 * or columns ({@code <th>, {@code <td>}} is going to overwrite tables' style.
+	 *
+	 * @param styles Styles to be added to table.
+	 * @return builder it self
+	 */
 	public HtmlTableBuilder tableStyle(Style... styles) {
 		this.tableStyles.addAll(Arrays.asList(styles));
 		return this;
 	}
 
+	/**
+	 * Apply style to all columns ({@code <th>} , {@code <td>}).
+	 * It applies styles at point when you {@link #build()} html String or {@link #extract()} html and css from builder.
+	 * <p>TODO : extract method.</p>
+	 * <p>
+	 * When building or extracting result of the table, some or all of the styles applied to individual lines({@code <tr>})
+	 * or columns ({@code <th>, {@code <td>}} is going to overwrite tables' style.
+	 * </p>
+	 * @param styles Styles to be added to each individual columns.
+	 * @return builder it self
+	 */
 	public HtmlTableBuilder allColumnStyle(Style... styles) {
 		this.allColumnStyles.addAll(Arrays.asList(styles));
 		return this;
@@ -192,6 +215,10 @@ public class HtmlTableBuilder {
 			return super.endLine();
 		}
 	}
+
+	/**
+	 * Class for building body of the table.
+	 */
 	public static class HtmlTableBodyBuilder extends HtmlTableLineBuilder{
 		public HtmlTableBodyBuilder(HtmlTableBuilder htmlTableBuilder) {
 			super(htmlTableBuilder, LineType.BODY);
@@ -205,6 +232,9 @@ public class HtmlTableBuilder {
 		}
 	}
 
+	/**
+	 * Class for building table's single line({@code <tr>})
+	 */
 	public static class HtmlTableLineBuilder{
 		private final HtmlTableBuilder parent;
 		private final TableLine line;
