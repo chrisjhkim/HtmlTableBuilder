@@ -18,4 +18,4 @@
 *.rar
 
 # Test results
-src/test/resources/*.html
+out/test/resources/*.html
